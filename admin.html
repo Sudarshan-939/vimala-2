@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vimala Enterprises - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Admin-specific overrides */
+        .admin-panel-static {
+            display: block;
+            position: static;
+            width: 100%;
+            max-width: 1200px;
+            margin: 30px auto;
+            height: auto;
+            background-color: white;
+            box-shadow: var(--shadow);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: #f0f2f5;
+        }
+
+        .header-container {
+            padding: 15px 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loading-spinner">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000;"></div>
+
+    <!-- Admin Login Modal -->
+    <div class="admin-login-modal" id="admin-login-modal" style="display: flex;">
+        <div class="admin-login-content">
+            <div class="admin-login-header">
+                <h2>Admin Login</h2>
+                <p>Enter your credentials to access admin panel</p>
+            </div>
+            <div class="admin-login-form">
+                <div class="form-group">
+                    <label for="admin-username">Username</label>
+                    <input type="text" id="admin-username" placeholder="Enter username (vimala)">
+                </div>
+                <div class="form-group">
+                    <label for="admin-password">Password</label>
+                    <input type="password" id="admin-password" placeholder="Enter password (vimala)">
+                </div>
+                <div class="admin-login-error" id="admin-login-error">
+                    Invalid username or password. Try again.
+                </div>
+                <button class="admin-login-btn" id="admin-login-submit">Login</button>
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="index.html"
+                        style="color: var(--secondary-color); text-decoration: none; font-size: 14px;">&larr; Back to
+                        Shop</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <div class="logo-icon">V</div>
+                <div class="logo-text">Vimala<span>Enterprises</span> <small
+                        style="font-size: 14px; color: #666; font-weight: 400;">| Admin Panel</small></div>
+            </div>
+
+            <div class="nav-links">
+                <a href="index.html">View Storefront <i class="fas fa-external-link-alt"></i></a>
+                <a href="#" id="logout-btn" style="color: #d32f2f;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Panel Content -->
+    <div class="admin-panel-static" id="admin-panel">
+        <div class="admin-header">
+            <h2>Dashboard</h2>
+        </div>
+
+        <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="bookings-dashboard">Bookings Dashboard</button>
+            <button class="admin-tab" data-tab="add-equipment">Add Equipment</button>
+            <button class="admin-tab" data-tab="manage-equipment">Manage Equipment</button>
+            <button class="admin-tab" data-tab="gallery-management">Gallery Management</button>
+            <button class="admin-tab" data-tab="contact-info">Contact Info</button>
+        </div>
+
+        <div class="admin-content">
+            <!-- Bookings Dashboard -->
+            <div class="tab-content active" id="bookings-dashboard">
+                <h3>Bookings Dashboard</h3>
+
+                <!-- Admin Search and Filters -->
+                <div class="admin-search-container">
+                    <input type="text" id="admin-search" class="admin-search"
+                        placeholder="Search by customer name, email, booking ID...">
+                    <button class="submit-btn" id="admin-search-btn">Search</button>
+                </div>
+
+                <div class="admin-filters">
+                    <select id="filter-status" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="completed">Completed</option>
+                    </select>
+
+                    <select id="filter-date" class="filter-select">
+                        <option value="">All Dates</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+
+                    <select id="filter-project" class="filter-select">
+                        <option value="">All Projects</option>
+                        <option value="feature-film">Feature Film</option>
+                        <option value="short-film">Short Film</option>
+                        <option value="documentary">Documentary</option>
+                        <option value="commercial">Commercial</option>
+                    </select>
+
+                    <button class="submit-btn" id="reset-filters"
+                        style="background-color: var(--secondary-color); padding: 8px 15px;">
+                        Reset Filters
+                    </button>
+                </div>
+
+                <div id="bookings-container">
+                    <!-- Bookings will be loaded via API -->
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        <div class="spinner" style="margin: 0 auto 20px;"></div>
+                        <p>Loading bookings...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Equipment -->
+            <div class="tab-content" id="add-equipment">
+                <h3>Add New Equipment</h3>
+                <form class="admin-form" id="add-equipment-form">
+                    <div class="form-group">
+                        <label for="equipment-name">Equipment Name</label>
+                        <input type="text" id="equipment-name" placeholder="e.g., Sony FX6 Cinema Camera" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="equipment-type">Equipment Type</label>
+                        <select id="equipment-type" required>
+                            <option value="">Select Type</option>
+                            <option value="camera">Camera</option>
+                            <option value="light">Lighting</option>
+                            <option value="lens">Lens</option>
+                            <option value="accessory">Accessory</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="equipment-price">Daily Rental Price (₹)</label>
+                        <input type="number" id="equipment-price" min="1" step="0.01" required>
+                    </div>
+
+                    <!-- Image Upload Section -->
+                    <div class="form-group">
+                        <label>Equipment Image</label>
+                        <div class="image-upload-container" id="image-upload-container">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Click to upload or drag and drop</p>
+                            <div class="upload-btn">
+                                <input type="file" id="image-upload" accept="image/*" style="display: none;">
+                                <label for="image-upload" style="cursor: pointer;">Choose Image</label>
+                            </div>
+                            <div id="image-preview"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="equipment-description">Description</label>
+                        <textarea id="equipment-description"
+                            placeholder="Describe the equipment features and specifications"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="equipment-stock">Available Units</label>
+                        <input type="number" id="equipment-stock" min="1" required>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Add Equipment</button>
+                </form>
+            </div>
+
+            <!-- Manage Equipment -->
+            <div class="tab-content" id="manage-equipment">
+                <h3>Manage Equipment</h3>
+                <div id="admin-equipment-list">
+                    <!-- Admin equipment list will be loaded via API -->
+                </div>
+            </div>
+
+            <!-- Gallery Management -->
+            <div class="tab-content" id="gallery-management">
+                <h3>Gallery Management</h3>
+                <p>Upload multiple images for the scrolling gallery. Images will scroll automatically from right to
+                    left.</p>
+
+                <div class="gallery-upload-container" id="gallery-upload-container">
+                    <i class="fas fa-images"></i>
+                    <p>Upload multiple images for the scrolling gallery</p>
+                    <div class="gallery-upload-btn">
+                        <input type="file" id="gallery-upload" accept="image/*" multiple style="display: none;">
+                        <label for="gallery-upload" style="cursor: pointer;">Select Multiple Images</label>
+                    </div>
+                    <div id="gallery-preview" class="gallery-preview">
+                        <!-- Gallery preview will be shown here -->
+                    </div>
+                </div>
+
+                <div id="current-gallery">
+                    <h4>Current Gallery Images</h4>
+                    <div id="gallery-images-list" class="gallery-preview">
+                        <!-- Current gallery images will be loaded here -->
+                    </div>
+                </div>
+
+                <button class="submit-btn" id="save-gallery" style="margin-top: 20px;">Save Gallery Changes</button>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="tab-content" id="contact-info">
+                <h3>Manage Contact Information</h3>
+                <div class="contact-admin">
+                    <form id="contact-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contact-address">Address</label>
+                                <input type="text" id="contact-address" placeholder="Enter address">
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-phone">Phone Number</label>
+                                <input type="text" id="contact-phone" placeholder="Enter phone number">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contact-email">Email Address</label>
+                                <input type="email" id="contact-email" placeholder="Enter email">
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-hours">Business Hours</label>
+                                <input type="text" id="contact-hours" placeholder="e.g., Mon-Fri 9AM-6PM">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Update Contact Info</button>
+                    </form>
+
+                    <div style="margin-top: 30px;">
+                        <h4>Current Contact Information</h4>
+                        <div id="current-contact-info">
+                            <!-- Current contact info will be loaded via API -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2023 Vimala Enterprises. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

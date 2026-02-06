@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vimala Enterprises - Cine Equipment Rental</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loading-spinner">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000;"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <div class="logo-icon">V</div>
+                <div class="logo-text">Vimala<span>Enterprises</span></div>
+            </div>
+
+            <div class="nav-links" id="nav-links">
+                <a href="#" class="active" id="home-link">Home</a>
+                <a href="#equipment-section" class="equipment-link" data-filter="all">Equipment</a>
+                <a href="#contact-section">Contact</a>
+
+                <!-- User Profile / Login -->
+                <div class="user-profile" id="user-profile">
+                    <button class="login-btn" id="login-button">
+                        <i class="fas fa-user"></i> Login
+                    </button>
+                    <!-- Profile Dropdown -->
+                    <div class="profile-dropdown" id="profile-dropdown">
+                        <div class="dropdown-header" id="profile-header">
+                            <h4>Welcome Guest!</h4>
+                            <p>Login to access your bookings</p>
+                        </div>
+                        <div class="dropdown-menu" id="profile-menu">
+                            <!-- Menu content will be injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cart-icon" id="cart-toggle" style="cursor: pointer;">
+                    <i class="fas fa-shopping-cart fa-lg"></i>
+                    <span class="cart-count">0</span>
+                </div>
+            </div>
+
+            <div class="hamburger-menu" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Premium Cinema Equipment Rental</h1>
+            <p>Top-tier cameras, lenses, and lighting for your next masterpiece. Available for daily and weekly rentals
+                at competitive rates.</p>
+
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search for cameras, lights, lenses...">
+                <button id="search-btn"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Scroller -->
+    <div class="image-scroller-container">
+        <div class="image-scroller" id="image-scroller">
+            <!-- Images will be injected by JS -->
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Equipment Listing -->
+        <section id="equipment-section">
+            <div class="section-title">
+                <h2>Our Inventory</h2>
+                <p>Browse our extensive collection of professional filmmaking gear</p>
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">All Equipment</button>
+                <button class="filter-btn" data-filter="camera">Cameras</button>
+                <button class="filter-btn" data-filter="light">Lighting</button>
+                <button class="filter-btn" data-filter="lens">Lenses</button>
+                <button class="filter-btn" data-filter="accessory">Accessories</button>
+            </div>
+
+            <div class="equipment-grid" id="equipment-container">
+                <!-- Equipment cards will be injected by JS -->
+                <div style="text-align: center; grid-column: 1 / -1; padding: 40px;">
+                    <div class="spinner" style="margin: 0 auto 20px;"></div>
+                    <p>Loading equipment...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Bookings Section (Hidden by default) -->
+        <section id="user-bookings-section" class="user-bookings" style="display: none;">
+            <div class="section-title" style="margin-bottom: 20px; text-align: left;">
+                <h2>My Bookings</h2>
+            </div>
+            <div id="user-bookings-container">
+                <!-- User bookings will be injected here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Cart Modal -->
+    <div class="modal" id="cart-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Your Cart</h2>
+                <button class="close-modal" id="close-cart">&times;</button>
+            </div>
+            <div class="modal-body">
+                <table class="cart-items">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Price/Day</th>
+                            <th>Duration</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-items">
+                        <!-- Cart items will be injected by JS -->
+                    </tbody>
+                </table>
+                <div id="empty-cart-message" style="text-align: center; padding: 30px; display: none;">
+                    <i class="fas fa-shopping-cart" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+                    <p>Your cart is empty</p>
+                </div>
+
+                <!-- Customer Details Form -->
+                <div class="customer-form" id="customer-details-form"
+                    style="display: none; margin-top: 30px; border-top: 1px solid #eee; padding-top: 30px;">
+                    <h3 style="margin-bottom: 20px;">Customer Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customer-name">Full Name *</label>
+                            <input type="text" id="customer-name" required placeholder="Enter your name">
+                        </div>
+                        <div class="form-group">
+                            <label for="customer-email">Email Address *</label>
+                            <input type="email" id="customer-email" required placeholder="Enter your email">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customer-phone">Phone Number *</label>
+                            <input type="tel" id="customer-phone" required placeholder="Enter your phone number">
+                        </div>
+                        <div class="form-group">
+                            <label for="customer-company">Company (Optional)</label>
+                            <input type="text" id="customer-company" placeholder="Production House / Studio">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="project-type">Project Type *</label>
+                            <select id="project-type" required
+                                style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">
+                                <option value="">Select Project Type</option>
+                                <option value="Feature Film">Feature Film</option>
+                                <option value="Short Film">Short Film</option>
+                                <option value="Documentary">Documentary</option>
+                                <option value="Commercial">Commercial</option>
+                                <option value="Music Video">Music Video</option>
+                                <option value="Wedding/Event">Wedding/Event</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="shoot-date">Shoot Start Date *</label>
+                            <input type="date" id="shoot-date" required
+                                style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="special-requirements">Special Requirements</label>
+                        <textarea id="special-requirements" placeholder="Any specific needs or questions?"
+                            style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; min-height: 80px;"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="total-price">Total (3 Days): <span id="cart-total">₹0</span></div>
+                <div>
+                    <button class="checkout-btn" id="proceed-to-details">Proceed to Checkout</button>
+                    <button class="checkout-btn" id="checkout-btn"
+                        style="display: none; background-color: #2e7d32;">Confirm Booking</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div class="modal" id="receipt-modal" style="z-index: 2500;">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2>Booking Confirmation</h2>
+                <button class="close-modal" id="close-receipt">&times;</button>
+            </div>
+            <div class="modal-body" id="receipt-content">
+                <!-- Receipt content injected by JS -->
+            </div>
+            <div class="receipt-actions"
+                style="padding: 20px; background: #f9f9f9; display: flex; justify-content: center; gap: 15px;">
+                <button class="submit-btn" id="print-receipt" style="background-color: var(--secondary-color);">
+                    <i class="fas fa-print"></i> Print Receipt
+                </button>
+                <button class="submit-btn" id="download-receipt">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contact-section">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Vimala Enterprises</h3>
+                    <p id="footer-address">123 Film Street, Mumbai, India</p>
+                    <p id="footer-phone"><i class="fas fa-phone"></i> +91 98765 43210</p>
+                    <p id="footer-email"><i class="fas fa-envelope"></i> info@vimalaenterprises.com</p>
+                    <p id="footer-hours"><i class="fas fa-clock"></i> Mon-Sat: 9AM-7PM</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <a href="#" class="footer-link" data-filter="all">All Equipment</a>
+                    <a href="#" class="footer-link" data-filter="camera">Cameras</a>
+                    <a href="#" class="footer-link" data-filter="light">Lighting</a>
+                    <a href="#" class="footer-link" data-filter="lens">Lenses</a>
+                </div>
+                <div class="footer-column">
+                    <h3>Connect With Us</h3>
+                    <p>Follow us on social media for new equipment updates and filmmaking tips.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Vimala Enterprises. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/customer.js"></script>
+</body>
+
+</html>
