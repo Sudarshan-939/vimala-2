@@ -2,10 +2,14 @@
 // REAL API SERVICE (Connects to Flask Backend)
 // ============================================
 
+// TODO: Change this URL to your Render Backend URL after deployment
+// Example: const API_BASE_URL = 'https://your-app-name.onrender.com';
+const API_BASE_URL = 'https://vimala-25t1.onrender.com';
+
 class ApiService {
     constructor() {
-        // Backend URL (Flask default)
-        this.baseUrl = 'http://localhost:5000/api';
+        // Backend URL
+        this.baseUrl = `${API_BASE_URL}/api`;
     }
 
     // Helper for fetch requests
