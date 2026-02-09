@@ -26,6 +26,11 @@ class ApiService {
             options.body = JSON.stringify(data);
         }
 
+        const token = localStorage.getItem('cine_auth_token');
+        if (token) {
+            options.headers['Authorization'] = `Bearer ${token}`;
+        }
+
         try {
             const response = await fetch(url, options);
             if (!response.ok) {
@@ -113,8 +118,12 @@ class ApiService {
     }
 
     async adminLogin(credentials) {
-        // Admin login uses same endpoint but we check role in frontend for redirection
-        return this.login(credentials);
+        const response = await this.request('/auth/admin-login', 'POST', credentials);
+        if (response.success) {
+            localStorage.setItem('cine_auth_token', response.data.token);
+            localStorage.setItem('cine_current_user', JSON.stringify(response.data.user));
+        }
+        return response;
     }
 
     async logout() {
