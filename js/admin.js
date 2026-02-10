@@ -60,25 +60,40 @@ async function handleAdminLogin() {
         return;
     }
 
-    // Check credentials via API
-    const result = await apiService.adminLogin({ username, password });
+    // Disable button and show loading state
+    adminLoginSubmit.disabled = true;
+    const originalText = adminLoginSubmit.textContent;
+    adminLoginSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+    adminLoginError.style.display = 'none';
 
-    if (result.success) {
-        currentUser = result.data.user;
+    try {
+        // Check credentials via API
+        const result = await apiService.adminLogin({ username, password });
 
-        // Hide login modal if present (for when login is part of admin.html startup)
-        if (adminLoginModal) adminLoginModal.style.display = 'none';
+        if (result.success) {
+            currentUser = result.data.user;
 
-        // Initialize dashboard
-        await initAdminDashboard();
+            // Hide login modal if present (for when login is part of admin.html startup)
+            if (adminLoginModal) adminLoginModal.style.display = 'none';
 
-        // Clear form
-        adminUsernameInput.value = '';
-        adminPasswordInput.value = '';
-        adminLoginError.style.display = 'none';
-    } else {
-        adminLoginError.textContent = result.error || 'Invalid username or password';
+            // Initialize dashboard
+            await initAdminDashboard();
+
+            // Clear form
+            adminUsernameInput.value = '';
+            adminPasswordInput.value = '';
+            adminLoginError.style.display = 'none';
+        } else {
+            adminLoginError.textContent = result.error || 'Invalid username or password';
+            adminLoginError.style.display = 'block';
+        }
+    } catch (error) {
+        adminLoginError.textContent = 'Connection error. Please try again.';
         adminLoginError.style.display = 'block';
+    } finally {
+        // Re-enable button and restore text
+        adminLoginSubmit.disabled = false;
+        adminLoginSubmit.textContent = originalText;
     }
 }
 
