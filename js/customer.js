@@ -789,13 +789,26 @@ function setupProfileMenuListeners() {
             const password = document.getElementById('login-password').value;
 
             if (email && password) {
-                const result = await apiService.login({ email, password });
-                if (result.success) {
-                    profileDropdown.classList.remove('active');
-                    await updateUserProfile();
-                    showNotification(result.message);
-                } else {
-                    showNotification(result.error, 'error');
+                // Disable button and show loading state
+                loginBtn.disabled = true;
+                const originalText = loginBtn.textContent;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+
+                try {
+                    const result = await apiService.login({ email, password });
+                    if (result.success) {
+                        profileDropdown.classList.remove('active');
+                        await updateUserProfile();
+                        showNotification(result.message);
+                    } else {
+                        showNotification(result.error, 'error');
+                    }
+                } catch (error) {
+                    showNotification('Connection error. Please try again.', 'error');
+                } finally {
+                    // Re-enable button and restore text
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = originalText;
                 }
             } else {
                 showNotification('Please enter email and password', 'error');
