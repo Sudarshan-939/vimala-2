@@ -159,8 +159,13 @@ header {
 }
 
 @keyframes scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 .scroller-image {
@@ -175,7 +180,7 @@ header {
 
 .scroller-image:hover {
     transform: scale(1.05);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
 .image-scroller:hover {
@@ -209,7 +214,7 @@ header {
     width: 320px;
     background: white;
     border-radius: 8px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     display: none;
     z-index: 1000;
     overflow: hidden;
@@ -225,6 +230,7 @@ header {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -452,7 +458,8 @@ header {
     transition: var(--transition);
 }
 
-.filter-btn.active, .filter-btn:hover {
+.filter-btn.active,
+.filter-btn:hover {
     background-color: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
@@ -564,6 +571,8 @@ header {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    /* Prevent any rotating animations from affecting modal */
+    animation: none !important;
 }
 
 .modal-header {
@@ -901,7 +910,9 @@ header {
     color: var(--secondary-color);
 }
 
-.admin-form input, .admin-form select, .admin-form textarea {
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
     width: 100%;
     padding: 12px 15px;
     border: 1px solid #ddd;
@@ -1021,7 +1032,8 @@ header {
     margin-top: 20px;
 }
 
-.bookings-table th, .bookings-table td {
+.bookings-table th,
+.bookings-table td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid #eee;
@@ -1153,7 +1165,8 @@ footer {
     color: white;
 }
 
-.footer-column p, .footer-column a {
+.footer-column p,
+.footer-column a {
     color: #bbb;
     margin-bottom: 10px;
     display: block;
@@ -1190,6 +1203,8 @@ footer {
 }
 
 /* Loading Spinner */
+
+/* Modern Loading Spinner */
 .loading-spinner {
     display: none;
     position: fixed;
@@ -1197,41 +1212,102 @@ footer {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(255, 255, 255, 0.9);
     z-index: 5000;
     justify-content: center;
     align-items: center;
+    backdrop-filter: blur(5px);
 }
 
 .spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid var(--primary-color);
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    position: relative;
+    animation: rotate 1s linear infinite;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.spinner::before,
+.spinner::after {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    inset: 0px;
+    border-radius: 50%;
+    border: 5px solid #FFF;
+    animation: prixClipFix 2s linear infinite;
+}
+
+.spinner::after {
+    border-color: var(--primary-color);
+    animation: prixClipFix 2s linear infinite, rotate 0.5s linear infinite reverse;
+    inset: 6px;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg)
+    }
+
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
+@keyframes prixClipFix {
+    0% {
+        clip-path: polygon(50% 50%, 0 0, 0 0, 0 0, 0 0, 0 0)
+    }
+
+    25% {
+        clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 0, 100% 0, 100% 0)
+    }
+
+    50% {
+        clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 100% 100%, 100% 100%)
+    }
+
+    75% {
+        clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 100%)
+    }
+
+    100% {
+        clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0)
+    }
 }
 
 @keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
+
 @keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
 }
+
 @media print {
     body * {
         visibility: hidden;
     }
-    .modal, .modal * {
+
+    .modal,
+    .modal * {
         visibility: visible;
     }
+
     .modal {
         position: absolute;
         left: 0;
@@ -1240,6 +1316,7 @@ footer {
         height: auto;
         background: white;
     }
+
     .receipt-actions {
         display: none !important;
     }

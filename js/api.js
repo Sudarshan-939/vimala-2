@@ -33,6 +33,13 @@ class ApiService {
 
         try {
             const response = await fetch(url, options);
+
+            // Check if response is JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Server returned an invalid response. Please check if the backend is running properly.');
+            }
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || 'Network response was not ok');
@@ -40,9 +47,16 @@ class ApiService {
             return await response.json();
         } catch (error) {
             console.error(`API Error (${endpoint}):`, error);
+
+            // Provide more helpful error messages
+            let errorMessage = error.message;
+            if (error.message.includes('<!doctype') || error.message.includes('Unexpected token')) {
+                errorMessage = 'Backend server error. Please contact support.';
+            }
+
             return {
                 success: false,
-                error: error.message || 'Something went wrong'
+                error: errorMessage || 'Something went wrong'
             };
         }
     }
@@ -119,6 +133,24 @@ class ApiService {
 
     async adminLogin(credentials) {
         const response = await this.request('/auth/admin-login', 'POST', credentials);
+        if (response.success) {
+            localStorage.setItem('cine_auth_token', response.data.token);
+            localStorage.setItem('cine_current_user', JSON.stringify(response.data.user));
+        }
+        return response;
+    }
+
+    async googleLogin(token) {
+        const response = await this.request('/auth/google', 'POST', { token });
+        if (response.success) {
+            localStorage.setItem('cine_auth_token', response.data.token);
+            localStorage.setItem('cine_current_user', JSON.stringify(response.data.user));
+        }
+        return response;
+    }
+
+    async register(userData) {
+        const response = await this.request('/auth/register', 'POST', userData);
         if (response.success) {
             localStorage.setItem('cine_auth_token', response.data.token);
             localStorage.setItem('cine_current_user', JSON.stringify(response.data.user));

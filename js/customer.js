@@ -652,8 +652,15 @@ async function updateUserProfile() {
 
             profileMenu.innerHTML = `
                 <div class="auth-form">
+                    <button class="google-btn" onclick="window.handleGoogleLogin()">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
+                        Continue with Google
+                    </button>
+                    
+                    <div class="auth-separator">OR</div>
+
                     <div class="form-tabs">
-                        <button class="form-tab active" data-form="login">Login</button>
+                        <button class="form-tab active" data-form="login">LoginWithPass</button>
                         <button class="form-tab" data-form="signup">Sign Up</button>
                     </div>
 
@@ -820,25 +827,55 @@ function setupProfileMenuListeners() {
     const signupBtn = document.getElementById('signup-btn');
     if (signupBtn) {
         signupBtn.addEventListener('click', async () => {
-            const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value.trim();
 
-            if (name && email && password) {
-                // For demo, we'll just login the user after "signup"
-                const result = await apiService.login({ email, password });
+            // Validation
+            if (!name || !email || !password) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Please enter a valid email address', 'error');
+                return;
+            }
+
+            // Password validation
+            if (password.length < 6) {
+                showNotification('Password must be at least 6 characters long', 'error');
+                return;
+            }
+
+            // Disable button and show loading state
+            signupBtn.disabled = true;
+            const originalText = signupBtn.textContent;
+            signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+
+            try {
+                const result = await apiService.register({ name, email, password });
+
                 if (result.success) {
-                    // Update user name since it might be new
-                    let user = result.data.user;
-                    user.name = name;
-                    localStorage.setItem('cine_current_user', JSON.stringify(user));
-
                     profileDropdown.classList.remove('active');
                     await updateUserProfile();
-                    showNotification("Account created successfully");
+                    showNotification('Account created successfully! Welcome aboard!');
+
+                    // Clear form fields
+                    document.getElementById('signup-name').value = '';
+                    document.getElementById('signup-email').value = '';
+                    document.getElementById('signup-password').value = '';
+                } else {
+                    showNotification(result.error || 'Registration failed. Please try again.', 'error');
                 }
-            } else {
-                showNotification('Please fill all fields', 'error');
+            } catch (error) {
+                showNotification('Connection error. Please try again.', 'error');
+            } finally {
+                // Re-enable button and restore text
+                signupBtn.disabled = false;
+                signupBtn.textContent = originalText;
             }
         });
     }
